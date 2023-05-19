@@ -107,3 +107,15 @@ button {
     background-color: #0f0f0f69;
   }
 }
+
+.codeArea {
+  flex: 1;
+  margin: 16px;
+  padding: 8px;
+  border: solid 1px #0f0f0f69;
+  background-color: #e8e8e8;
+
+  text-align: left;
+  font-size: 11pt;
+}
+

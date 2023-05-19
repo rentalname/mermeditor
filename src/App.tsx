@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import mmd from "mermaid"; 
+import mmd from "mermaid";
 import dedent from 'ts-dedent'
 import "./App.css";
 
 const api = mmd.mermaidAPI
 
-api.initialize({ startOnLoad: false})
+api.initialize({ startOnLoad: false })
 
 function App() {
   const [svg, setSvg] = useState("")
@@ -22,7 +22,7 @@ function App() {
       <h1>Offline Mermaid Editor</h1>
 
       <div className="row">
-        <textarea cols={30} rows={10} onChange={(e) => reload(e.target.value)}>
+        <pre className="codeArea" contentEditable onChange={(e) => reload(e.currentTarget.innerText)}>
           {dedent(`
             sequenceDiagram
               A->> B: Query
@@ -31,11 +31,8 @@ function App() {
               C->> B: Response
               B->> A: Forward response
           `)}
-        </textarea>
-      </div>
-
-      <div className="row">
-        <div className="graph" dangerouslySetInnerHTML={{__html: svg}}></div>
+        </pre>
+        <div className="renderArea" dangerouslySetInnerHTML={{ __html: svg }}></div>
       </div>
     </div>
   );
