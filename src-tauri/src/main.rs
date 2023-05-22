@@ -10,8 +10,8 @@ use std::process::Command;
 fn export(code: String, app_handle: tauri::AppHandle) -> String {
     let app_paths = app_init(app_handle);
 
-    let mut file = File::create(app_paths.input_file_path.clone()).expect("msg");
-    writeln!(file, "{}", code).expect("msg");
+    let mut file = File::create(app_paths.input_file_path.clone()).unwrap();
+    writeln!(file, "{}", code).unwrap();
 
     let result = Command::new("yarn")
         .arg("mmdc")
@@ -19,14 +19,14 @@ fn export(code: String, app_handle: tauri::AppHandle) -> String {
         .args(["-e", "png"])
         .args(["--output", &app_paths.output_file_path])
         .output()
-        .expect("errrrrrooor");
+        .unwrap();
 
     if result.status.success() {
         println!("stdout => {}", String::from_utf8(result.stdout).unwrap());
         return app_paths.output_file_path;
     } else {
         println!("stderr => {}", String::from_utf8(result.stderr).unwrap());
-        println!("{}", "FAIL");
+        println!("FAIL");
         return "".to_string();
     }
 }
@@ -37,17 +37,17 @@ struct AppPaths {
 }
 
 fn app_init(app_handle: tauri::AppHandle) -> AppPaths {
-    let cache_dir = app_handle.path_resolver().app_cache_dir().expect("msg");
+    let cache_dir = app_handle.path_resolver().app_cache_dir().unwrap();
 
     let binding = env::temp_dir().join("a.mmd");
-    let input_file_path = binding.to_str().expect("msg").to_string();
+    let input_file_path = binding.to_str().unwrap().to_string();
 
     let output_dir = cache_dir.join("out/files");
     let binding = output_dir.join("a.png");
-    let output_file_path = binding.to_str().expect("msg").to_string();
+    let output_file_path = binding.to_str().unwrap().to_string();
 
     if !output_dir.exists() {
-        create_dir_all(output_dir).expect("msg");
+        create_dir_all(output_dir).unwrap();
     }
 
     return AppPaths {

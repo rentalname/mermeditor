@@ -29,7 +29,7 @@ function App() {
     }
   }
 
-  const rerender = async () => {
+  const renderHandler = async () => {
     if (!source.current) return
 
     const code = source.current.value
@@ -42,24 +42,21 @@ function App() {
 
     const code = source.current.value
 
-    const filePath = await save({ filters: [{ name: 'graph', extensions: ['png'] }, { name: 'svg', extensions: ['svg'] }] })
+    const filePath = await save({ filters: [{ name: 'mermaid', extensions: ['png', 'svg', 'pdf'] }], defaultPath: 'graph' })
 
     if (filePath === null || filePath.length === 0) return
 
     const res: string = await invoke('export', { code })
-    console.log(res)
 
     await copyFile(res, filePath);
   }
-
-  console.log(error)
 
   return (
     <div className="container">
       <h1>Offline Mermaid Editor</h1>
 
       <div className="row">
-        <textarea cols={80} rows={30} className="codeArea" ref={source} onChange={rerender}
+        <textarea cols={80} rows={30} className="codeArea" ref={source} onChange={renderHandler}
           defaultValue={dedent(`
             sequenceDiagram
               A->> B: Query
@@ -71,7 +68,7 @@ function App() {
         />
       </div>
       <div className="row">
-        <button onClick={rerender}><span>render</span>{error.parseError ? '⚠️' : null}</button>
+        <button onClick={renderHandler}><span>render</span>{error.parseError ? '⚠️' : null}</button>
         <button onClick={saveHandler}><span>save</span>{error.parseError ? '⚠️' : null}</button>
       </div>
       <div className="row">
