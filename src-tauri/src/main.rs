@@ -8,35 +8,22 @@ use std::process::Command;
 
 #[tauri::command]
 fn export(code: String, app_handle: tauri::AppHandle) -> String {
-    let cache_dir = app_handle.path_resolver().app_cache_dir().expect("msg");
-    let filename = "a.mmd";
-    let dir = env::temp_dir();
-    let f_path = dir.as_path().join(filename);
-    let mut file = File::create(f_path).expect("msg");
+    let app_paths = app_init(app_handle);
+
+    let mut file = File::create(app_paths.input_file_path.clone()).expect("msg");
     writeln!(file, "{}", code).expect("msg");
-
-    let binding = dir.as_path().join(filename);
-    let input_file_path = binding.to_str().expect("msg");
-
-    let out_dir = cache_dir.join("out/files");
-    let binding = out_dir.join("a.png");
-    let out_file_path = binding.to_str().expect("msg");
-
-    if !out_dir.exists() {
-        create_dir_all(out_dir).expect("msg");
-    }
 
     let result = Command::new("yarn")
         .arg("mmdc")
-        .args(["--input", input_file_path])
+        .args(["--input", &app_paths.input_file_path])
         .args(["-e", "png"])
-        .args(["--output", out_file_path])
+        .args(["--output", &app_paths.output_file_path])
         .output()
         .expect("errrrrrooor");
 
     if result.status.success() {
         println!("stdout => {}", String::from_utf8(result.stdout).unwrap());
-        return out_file_path.to_string();
+        return app_paths.output_file_path;
     } else {
         println!("stderr => {}", String::from_utf8(result.stderr).unwrap());
         println!("{}", "FAIL");
