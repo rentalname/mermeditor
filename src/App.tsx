@@ -1,7 +1,9 @@
-import { useRef, useState } from "react";
+import { save } from '@tauri-apps/api/dialog';
+import { copyFile } from '@tauri-apps/api/fs';
 import { invoke } from "@tauri-apps/api/tauri";
 import mermaid from "mermaid";
-import dedent from 'ts-dedent'
+import { useRef, useState } from "react";
+import dedent from 'ts-dedent';
 import "./App.css";
 
 const api = mermaid.mermaidAPI
@@ -27,7 +29,6 @@ function App() {
     }
   }
 
-
   const rerender = async () => {
     if (!source.current) return
 
@@ -36,12 +37,19 @@ function App() {
     render(code)
   }
 
-  const save = async () => {
+  const saveHandler = async () => {
     if (!source.current) return
 
     const code = source.current.value
 
-    invoke('export', { code })
+    const filePath = await save({ filters: [{ name: 'graph', extensions: ['png'] }, { name: 'svg', extensions: ['svg'] }] })
+
+    if (filePath === null || filePath.length === 0) return
+
+    const res: string = await invoke('export', { code })
+    console.log(res)
+
+    await copyFile(res, filePath);
   }
 
   console.log(error)
@@ -51,8 +59,8 @@ function App() {
       <h1>Offline Mermaid Editor</h1>
 
       <div className="row">
-        <textarea cols={80} rows={30} className="codeArea" ref={source} onChange={rerender}>
-          {dedent(`
+        <textarea cols={80} rows={30} className="codeArea" ref={source} onChange={rerender}
+          defaultValue={dedent(`
             sequenceDiagram
               A->> B: Query
               B->> C: Forward query
@@ -60,11 +68,11 @@ function App() {
               C->> B: Response
               B->> A: Forward response
           `)}
-        </textarea>
+        />
       </div>
       <div className="row">
         <button onClick={rerender}><span>render</span>{error.parseError ? '⚠️' : null}</button>
-        <button onClick={save}><span>save</span>{error.parseError ? '⚠️' : null}</button>
+        <button onClick={saveHandler}><span>save</span>{error.parseError ? '⚠️' : null}</button>
       </div>
       <div className="row">
         <div className="renderArea" dangerouslySetInnerHTML={{ __html: svg }}></div>

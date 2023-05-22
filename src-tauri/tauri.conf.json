@@ -19,8 +19,10 @@
       },
       "fs": {
         "all": false,
-        "readFile": false,
-        "writeFile": true
+        "readFile": true,
+        "writeFile": false,
+        "copyFile": true,
+        "scope": ["$CACHE/**"]
       },
       "dialog": {
         "all": false,
