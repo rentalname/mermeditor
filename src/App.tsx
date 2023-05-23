@@ -6,6 +6,10 @@ import { useRef, useState } from "react";
 import dedent from 'ts-dedent';
 import "./App.css";
 
+import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
+import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+
 const api = mermaid.mermaidAPI
 
 api.initialize({ startOnLoad: false })
@@ -53,10 +57,21 @@ function App() {
 
   return (
     <div className="container">
-      <h1>Offline Mermaid Editor</h1>
+      <div className="header">
+        <h1 className='appTitle'>Offline Mermaid Editor</h1>
+        <div className="actions">
+          <RefreshOutlinedIcon className="button" onClick={renderHandler} />
+          <SaveAltOutlinedIcon className="button" onClick={saveHandler} />
+          {/* <button onClick={renderHandler}><span>render</span>{error.parseError ? '⚠️' : null}</button>
+          <button onClick={saveHandler}><span>save</span>{error.parseError ? '⚠️' : null}</button> */}
+        </div>
+      </div>
 
       <div className="row">
-        <textarea cols={80} rows={30} className="codeArea" ref={source} onChange={renderHandler}
+      </div>
+
+      <div className="row">
+        <textarea cols={80} rows={16} className="codeArea" ref={source} onChange={renderHandler}
           defaultValue={dedent(`
             sequenceDiagram
               A->> B: Query
@@ -67,10 +82,7 @@ function App() {
           `)}
         />
       </div>
-      <div className="row">
-        <button onClick={renderHandler}><span>render</span>{error.parseError ? '⚠️' : null}</button>
-        <button onClick={saveHandler}><span>save</span>{error.parseError ? '⚠️' : null}</button>
-      </div>
+
       <div className="row">
         <div className="renderArea" dangerouslySetInnerHTML={{ __html: svg }}></div>
       </div>

@@ -1,15 +1,38 @@
 .container {
   margin: 0;
-  padding-top: 10vh;
+  padding-top: 16px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   text-align: center;
+  max-height: 100vh;
 }
 
 .row {
   display: flex;
   justify-content: center;
+}
+
+.header {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.actions {
+  display: flex;
+  align-items: start;
+}
+
+.actions .button {
+  cursor: pointer;
+}
+
+.appTitle {
+  line-height: 1;
+  font-size: 16pt;
+  margin: 0 16px 0 0;
 }
 
 .codeArea {
