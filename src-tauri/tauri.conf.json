@@ -20,9 +20,11 @@
       "fs": {
         "all": false,
         "readFile": true,
-        "writeFile": false,
+        "writeFile": true,
         "copyFile": true,
-        "scope": ["$CACHE/**"]
+        "scope": [
+          "$CACHE/**"
+        ]
       },
       "dialog": {
         "all": false,
@@ -42,7 +44,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.example.rentalname",
       "targets": "all"
     },
     "security": {

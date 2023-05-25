@@ -1,5 +1,5 @@
 import { save } from '@tauri-apps/api/dialog';
-import { copyFile } from '@tauri-apps/api/fs';
+import { writeBinaryFile } from '@tauri-apps/api/fs';
 import { invoke } from "@tauri-apps/api/tauri";
 import mermaid from "mermaid";
 import { useRef, useState } from "react";
@@ -9,6 +9,8 @@ import "./App.css";
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+
+import { svg2png } from './converter';
 
 const api = mermaid.mermaidAPI
 
@@ -46,13 +48,16 @@ function App() {
 
     const code = source.current.value
 
+    const valid = await api.parse(code, { suppressErrors: true })
+
+    if (!valid) return
+
     const filePath = await save({ filters: [{ name: 'mermaid', extensions: ['png', 'svg', 'pdf'] }], defaultPath: 'graph' })
 
     if (filePath === null || filePath.length === 0) return
 
-    const res: string = await invoke('export', { code })
-
-    await copyFile(res, filePath);
+    const { svg } = await api.render('theGraph', code)
+    await writeBinaryFile(filePath, svg2png(svg))
   }
 
   return (
