@@ -4,13 +4,18 @@ import { invoke } from "@tauri-apps/api/tauri";
 import mermaid from "mermaid";
 import { useRef, useState } from "react";
 import dedent from 'ts-dedent';
-import "./App.css";
+import styles from "./App.module.css";
 
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import OK from '@mui/icons-material/'
+
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 import { svg2png } from './converter';
+import ResizeHandle from './ResizeHandle';
 
 const api = mermaid.mermaidAPI
 
@@ -61,35 +66,54 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <div className="header">
-        <h1 className='appTitle'>Offline Mermaid Editor</h1>
-        <div className="actions">
-          <RefreshOutlinedIcon className="button" onClick={renderHandler} />
-          <SaveAltOutlinedIcon className="button" onClick={saveHandler} />
-          {/* <button onClick={renderHandler}><span>render</span>{error.parseError ? '⚠️' : null}</button>
-          <button onClick={saveHandler}><span>save</span>{error.parseError ? '⚠️' : null}</button> */}
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.appTitle}>Offline Mermaid Editor</h1>
+        <div className={styles.actions}>
+          <RefreshOutlinedIcon className={styles.actionButton} onClick={renderHandler} />
+          <SaveAltOutlinedIcon className={styles.actionButton} onClick={saveHandler} />
         </div>
       </div>
 
-      <div className="row">
-      </div>
+      <div className={styles.main}>
+        <PanelGroup autoSaveId="example" direction="vertical">
+          <Panel
+            className={styles.panel}
+            collapsible={true}
+            defaultSize={10}
+            order={1}
+          >
+            <div className={styles.panelContent}>
+              <textarea className={styles.editorArea} ref={source} onChange={renderHandler}
+                defaultValue={dedent(`
+                  sequenceDiagram
+                    A->> B: Query
+                    B->> C: Forward query
+                    Note right of C: Thinking...
+                    C->> B: Response
+                    B->> A: Forward response
+                `)}
+              />
+            </div>
+          </Panel>
 
-      <div className="row">
-        <textarea cols={80} rows={16} className="codeArea" ref={source} onChange={renderHandler}
-          defaultValue={dedent(`
-            sequenceDiagram
-              A->> B: Query
-              B->> C: Forward query
-              Note right of C: Thinking...
-              C->> B: Response
-              B->> A: Forward response
-          `)}
-        />
-      </div>
+          <div className={styles.buildStatus}>
+            {error.parseError ? <ErrorOutlineOutlinedIcon color='secondary' /> : <CheckCircleOutlineIcon color='primary' />}
+          </div>
 
-      <div className="row">
-        <div className="renderArea" dangerouslySetInnerHTML={{ __html: svg }}></div>
+          <ResizeHandle />
+          <Panel
+            className={styles.panel}
+            collapsible={true}
+            defaultSize={15}
+            order={2}
+          >
+
+            <div className={styles.panelContent}>
+              <div className={styles.renderArea} dangerouslySetInnerHTML={{ __html: svg }}></div>
+            </div>
+          </Panel>
+        </PanelGroup>
       </div>
     </div>
   );

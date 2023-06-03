@@ -1,0 +1,22 @@
+.resizeHandleOuter {
+  flex: 0 0 1.5rem;
+  position: relative;
+  outline: none;
+
+  --background-color: transparent;
+}
+
+.resizeHandleOuter[data-resize-handle-active] {
+  --background-color: var(--color-solid-resize-bar-handle);
+}
+
+.resizeHandleInner {
+  position: absolute;
+  top: 0.15em;
+  bottom: 0.15em;
+  left: 0.15em;
+  right: 0.15em;
+  border-radius: 0.25em;
+  background-color: var(--background-color);
+  transition: background-color 0.2s linear;
+}
