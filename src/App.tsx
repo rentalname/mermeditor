@@ -1,17 +1,16 @@
 import { save } from '@tauri-apps/api/dialog';
 import { writeBinaryFile } from '@tauri-apps/api/fs';
-import { invoke } from "@tauri-apps/api/tauri";
 import mermaid from "mermaid";
 import { useRef, useState } from "react";
 import dedent from 'ts-dedent';
 import styles from "./App.module.css";
 
-import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
-import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
+import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
+import { Panel, PanelGroup } from "react-resizable-panels";
 
 import { svg2png } from './converter';
 import ResizeHandle from './ResizeHandle';
@@ -24,27 +23,24 @@ function App() {
   const [error, setError] = useState({
     parseError: false,
   })
-  const [svg, setSvg] = useState("")
   const source = useRef<HTMLTextAreaElement>(null)
-
-  const render = async (text: string) => {
-    const valid = await api.parse(text, { suppressErrors: true })
-
-    if (valid) {
-      const { svg } = await api.render('theGraph', text)
-      setSvg(svg)
-      setError((error) => ({ ...error, parseError: false }))
-    } else {
-      setError((error) => ({ ...error, parseError: true }))
-    }
-  }
+  const svgDOM = useRef<HTMLDivElement>(null)
 
   const renderHandler = async () => {
     if (!source.current) return
 
     const code = source.current.value
 
-    render(code)
+    const valid = await api.parse(code, { suppressErrors: true })
+
+    setError((error) => ({ ...error, parseError: !valid }))
+
+    if (valid) {
+      const { svg, bindFunctions } = await api.render('theGraph', code)
+      const dom = svgDOM.current!
+      dom.innerHTML = svg
+      bindFunctions?.(dom)
+    }
   }
 
   const saveHandler = async () => {
@@ -109,7 +105,7 @@ function App() {
           >
 
             <div className={styles.panelContent}>
-              <div className={styles.renderArea} dangerouslySetInnerHTML={{ __html: svg }}></div>
+              <div className={styles.renderArea} ref={svgDOM}></div>
             </div>
           </Panel>
         </PanelGroup>
