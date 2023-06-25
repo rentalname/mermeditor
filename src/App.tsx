@@ -5,6 +5,8 @@ import { useRef, useState } from "react";
 import dedent from 'ts-dedent';
 import styles from "./App.module.css";
 
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
+
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
@@ -104,13 +106,15 @@ function App() {
             order={2}
           >
 
-            <div className={styles.panelContent}>
-              <div className={styles.renderArea} ref={svgDOM}></div>
-            </div>
+            <TransformWrapper initialScale={4} wheel={{ activationKeys: ['Meta'], step: 0.025 }} >
+              <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }}>
+                <div className={styles.renderArea} ref={svgDOM}></div>
+              </TransformComponent>
+            </TransformWrapper>
           </Panel>
         </PanelGroup>
       </div>
-    </div>
+    </div >
   );
 }
 

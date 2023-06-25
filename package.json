@@ -21,6 +21,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-resizable-panels": "^0.0.48",
+    "react-zoom-pan-pinch": "^3.0.8",
     "ts-dedent": "^2.2.0"
   },
   "devDependencies": {
