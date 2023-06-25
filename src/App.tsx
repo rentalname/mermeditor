@@ -106,7 +106,7 @@ function App() {
             order={2}
           >
 
-            <TransformWrapper initialScale={4} wheel={{ activationKeys: ['Meta'], step: 0.025 }} >
+            <TransformWrapper initialScale={4} wheel={{ activationKeys: ['Meta'], step: 0.1 }} >
               <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }}>
                 <div className={styles.renderArea} ref={svgDOM}></div>
               </TransformComponent>
