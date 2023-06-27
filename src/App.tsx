@@ -107,7 +107,7 @@ function App() {
           >
 
             <TransformWrapper initialScale={4} wheel={{ activationKeys: ['Meta'], step: 0.1 }} >
-              <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }}>
+              <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: '100%' }}>
                 <div className={styles.renderArea} ref={svgDOM}></div>
               </TransformComponent>
             </TransformWrapper>
