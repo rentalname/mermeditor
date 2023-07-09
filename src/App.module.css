@@ -55,18 +55,6 @@
   border-radius: 0.5rem;
 }
 
-.editorArea {
-  width: 100%;
-  height: calc(100% - 32px);
-  margin: 16px;
-  padding: 8px;
-  border: solid 1px #0f0f0f69;
-  background-color: #e8e8e8;
-  resize: none;
-  text-align: left;
-  font-size: 11pt;
-}
-
 .buildStatus {
   height: 1.5rem;
   text-align: center;

@@ -2,7 +2,6 @@ import { save } from '@tauri-apps/api/dialog';
 import { writeBinaryFile } from '@tauri-apps/api/fs';
 import mermaid from "mermaid";
 import { useRef, useState } from "react";
-import dedent from 'ts-dedent';
 import styles from "./App.module.css";
 
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
@@ -17,6 +16,8 @@ import { Panel, PanelGroup } from "react-resizable-panels";
 import { svg2png } from './converter';
 import ResizeHandle from './ResizeHandle';
 
+import Editor from './Editor'
+
 const api = mermaid.mermaidAPI
 
 api.initialize({ startOnLoad: false })
@@ -25,13 +26,11 @@ function App() {
   const [error, setError] = useState({
     parseError: false,
   })
-  const source = useRef<HTMLTextAreaElement>(null)
+  const source = useRef<string>("")
   const svgDOM = useRef<HTMLDivElement>(null)
 
   const renderHandler = async () => {
-    if (!source.current) return
-
-    const code = source.current.value
+    const code = source.current
 
     const valid = await api.parse(code, { suppressErrors: true })
 
@@ -45,10 +44,24 @@ function App() {
     }
   }
 
-  const saveHandler = async () => {
-    if (!source.current) return
+  const renderHandlerWithCode = async (code: string | undefined) => {
+    if (code === undefined) return
 
-    const code = source.current.value
+    const valid = await api.parse(code, { suppressErrors: true })
+
+    setError((error) => ({ ...error, parseError: !valid }))
+
+    if (valid) {
+      const { svg, bindFunctions } = await api.render('theGraph', code)
+      const dom = svgDOM.current!
+      dom.innerHTML = svg
+      bindFunctions?.(dom)
+      source.current = code
+    }
+  }
+
+  const saveHandler = async () => {
+    const code = source.current
 
     const valid = await api.parse(code, { suppressErrors: true })
 
@@ -80,18 +93,7 @@ function App() {
             defaultSize={10}
             order={1}
           >
-            <div className={styles.panelContent}>
-              <textarea className={styles.editorArea} ref={source} onChange={renderHandler}
-                defaultValue={dedent(`
-                  sequenceDiagram
-                    A->> B: Query
-                    B->> C: Forward query
-                    Note right of C: Thinking...
-                    C->> B: Response
-                    B->> A: Forward response
-                `)}
-              />
-            </div>
+            <Editor onChangeHook={renderHandlerWithCode} />
           </Panel>
 
           <div className={styles.buildStatus}>
