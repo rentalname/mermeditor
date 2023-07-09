@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import styles from "./App.module.css";
 
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
+import { blurReductionTransformer } from "./customTransformer";
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
@@ -16,7 +17,7 @@ import { Panel, PanelGroup } from "react-resizable-panels";
 import { svg2png } from './converter';
 import ResizeHandle from './ResizeHandle';
 
-import Editor from './Editor'
+import Editor from './Editor';
 
 const api = mermaid.mermaidAPI
 
@@ -107,8 +108,12 @@ function App() {
             defaultSize={15}
             order={2}
           >
-
-            <TransformWrapper initialScale={4} smooth={true} wheel={{ activationKeys: ['Meta'], smoothStep: 0.02 }} >
+            <TransformWrapper
+              initialScale={1}
+              smooth={true}
+              wheel={{ activationKeys: ['Meta'], smoothStep: 0.02 }}
+              customTransform={blurReductionTransformer}
+            >
               <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: '100%' }}>
                 <div className={styles.renderArea} ref={svgDOM}></div>
               </TransformComponent>
