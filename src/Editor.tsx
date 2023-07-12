@@ -14,7 +14,23 @@ loader.init().then((monaco) => {
       {
         keybinding: monaco.KeyMod.Shift | monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyD,
         command: "editor.action.copyLinesDownAction"
-      }
+      },
+      {
+        keybinding: monaco.KeyMod.WinCtrl | monaco.KeyMod.Shift | monaco.KeyCode.UpArrow,
+        command: "cursorColumnSelectUp"
+      },
+      {
+        keybinding: monaco.KeyMod.WinCtrl | monaco.KeyMod.Shift | monaco.KeyCode.DownArrow,
+        command: "cursorColumnSelectDown"
+      },
+      {
+        keybinding: monaco.KeyMod.WinCtrl | monaco.KeyMod.CtrlCmd | monaco.KeyCode.UpArrow,
+        command: "editor.action.moveLinesUpAction"
+      },
+      {
+        keybinding: monaco.KeyMod.WinCtrl | monaco.KeyMod.CtrlCmd | monaco.KeyCode.DownArrow,
+        command: "editor.action.moveLinesDownAction"
+      },
     ]
   )
 })
