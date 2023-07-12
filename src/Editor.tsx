@@ -26,16 +26,17 @@ self.MonacoEnvironment = {
 }
 
 type Props = {
+  template?: string;
   onChangeHook?: (text: string | undefined) => void;
 }
 
-const Editor: React.FC<Props> = ({ onChangeHook }) => {
+const Editor: React.FC<Props> = ({ template = classDiagramInstruction, onChangeHook }) => {
   return (
     <MonacoEditor
       className={styles.monacoEditor}
       defaultLanguage="mermaid"
       onChange={onChangeHook}
-      defaultValue={classDiagramInstruction}
+      value={template}
     />
   )
 }

@@ -1,7 +1,7 @@
 import { save } from '@tauri-apps/api/dialog';
 import { writeBinaryFile } from '@tauri-apps/api/fs';
 import mermaid from "mermaid";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./App.module.css";
 
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
@@ -12,12 +12,18 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 
+import Popper from '@mui/base/Popper';
+import SourceOutlinedIcon from '@mui/icons-material/SourceOutlined';
+import Button from '@mui/base/Button';
+
 import { Panel, PanelGroup } from "react-resizable-panels";
 
 import { svg2png } from './converter';
 import ResizeHandle from './ResizeHandle';
 
 import Editor from './Editor';
+import { styled, Theme } from '@mui/material';
+import { classDiagramInstruction, erDiagramInstruction, flowchartInstruction, sequenceInstruction, timelineInstruction, zenumlInstruction } from './instructions';
 
 const api = mermaid.mermaidAPI
 
@@ -76,6 +82,22 @@ function App() {
     await writeBinaryFile(filePath, svg2png(svg))
   }
 
+  const [template, setTemplate] = useState("")
+  const [popperAnchor, setPopperAnchor] = useState<null | HTMLElement | SVGSVGElement>(null)
+  const popperHandleClick = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+    setPopperAnchor(popperAnchor ? null : event.currentTarget);
+  }
+  const open = Boolean(popperAnchor);
+  const id = open ? 'simple-popper' : undefined;
+  const loadTemplateHandler = (instruction: string) => {
+    setTemplate(instruction)
+    setPopperAnchor(null)
+  }
+
+  useEffect(() => {
+    renderHandlerWithCode(template)
+  }, [template])
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -83,6 +105,17 @@ function App() {
         <div className={styles.actions}>
           <RefreshOutlinedIcon className={styles.actionButton} onClick={renderHandler} />
           <SaveAltOutlinedIcon className={styles.actionButton} onClick={saveHandler} />
+          <SourceOutlinedIcon className={styles.actionButton} onClick={(e) => popperHandleClick(e)} />
+          <Popper id={id} open={open} anchorEl={popperAnchor}>
+            <StyledPopperDiv>
+              <p>select template(clear current content)</p>
+              <Button onClick={() => { loadTemplateHandler(classDiagramInstruction) }}>classDiagram</Button>
+              <Button onClick={() => { loadTemplateHandler(erDiagramInstruction) }}>erDiagram</Button>
+              <Button onClick={() => { loadTemplateHandler(flowchartInstruction) }}>flowchart</Button>
+              <Button onClick={() => { loadTemplateHandler(sequenceInstruction) }}>sequence</Button>
+              <Button onClick={() => { loadTemplateHandler(timelineInstruction) }}>timeline</Button>
+            </StyledPopperDiv>
+          </Popper>
         </div>
       </div>
 
@@ -94,7 +127,7 @@ function App() {
             defaultSize={10}
             order={1}
           >
-            <Editor onChangeHook={renderHandlerWithCode} />
+            <Editor template={template} onChangeHook={renderHandlerWithCode} />
           </Panel>
 
           <div className={styles.buildStatus}>
@@ -126,3 +159,13 @@ function App() {
 }
 
 export default App;
+
+const StyledPopperDiv = styled('div')(
+  ({ theme }: { theme: Theme }) => `
+  padding: 0.5rem;
+  border: 1px solid;
+  background-color: ${theme.palette.mode === 'dark' ? '#121212' : '#fff'};
+  opacity: 1;
+  margin: 0.25rem 0px;
+`,
+);
