@@ -146,6 +146,9 @@ function App() {
               smooth={true}
               wheel={{ activationKeys: ['Meta'], smoothStep: 0.02 }}
               customTransform={blurReductionTransformer}
+              minScale={0.25}
+              maxScale={4}
+              disablePadding
             >
               <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: '100%' }}>
                 <div className={styles.renderArea} ref={svgDOM}></div>
