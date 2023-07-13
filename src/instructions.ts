@@ -77,51 +77,64 @@ erDiagram
 `
 
 export const flowchartInstruction = dedent`
-flowchart LR
-    markdown["\`This **is** _Markdown_\`"]
+flowchart TB
     newLines["\`Line1
     Line 2
     Line 3\`"]
-    markdown --> newLines
-    %% Node shapes
-    Shape_1(This is the text in the box)
-    Shape_2([This is the text in the box])
-    Shape_3[[This is the text in the box]]
-    Shape_4[(Database)]
-    Shape_5((This is the text in the circle))
-    Shape_6>This is the text in the box]
-    Shape_7{This is the text in the box}
-    Shape_8{{This is the text in the box}}
-    Shape_9[/This is the text in the box/]
-    Shape_10[\This is the text in the box\]
-    Shape_11[/Christmas\\\]
-    Shape_12[\\\Go shopping/]
-    Shape_13(((This is the text in the circle)))
 
     %% Links between nodes
-    L_1a --> L_1b
-    L_2a --- L_2b
-    L_3a -- This is the text! --- L_3b
-    L_4a ---|This is the text| L_4b
-    L_5a -->|text| L_5b
-    L_6a -- text --> L_6b
-    L_7a -.-> L_7b;
-    L_8a -. text .-> L_8b
-    L_9a ==> L_9b
-    L_10a == text ==> L_10b
-    L_11a ~~~ L_11b
-    L_12a & L_12b --> L_12c & L12d
+    subgraph lines
+        L_1a --> L_1b
+        L_2a --- L_2b
+        L_7a -.-> L_7b;
+        L_9a ==> L_9b
+        L_11a ~~~ L_11b
+    end
+    subgraph text
+        L_3a -- This is the text! --- L_3b
+        L_4a ---|This is the text| L_4b
+        L_5a -->|text| L_5b
+        L_6a -- text --> L_6b
+        L_8a -. text .-> L_8b
+        L_10a == text ==> L_10b
+    end
+    subgraph calcuration
+        L_12a & L_12b --> L_12c & L12d
+    end
 
     %% Subgraphs
-    c1-->a2
-    subgraph one
-    a1-->a2
+
+    subgraph a
+        a0-->a1
+        subgraph one
+            a1-->a2
+        end
+        subgraph three
+            c1-->c2
+        end
+        subgraph two
+            b1-->c1
+        end
     end
-    subgraph two
-    b1-->b2
+
+    subgraph ANSI/ISO Shapes
+        Shape_2([端子])
+        Shape_10[処理]
+        Shape_7{判断}
+        Shape_9[/入出力/]
+        Shape_3[[定義済み処理]]
+        Shape_5((On-Page Connector))
+        Shape_8{{準備}}
+        Shape_10[\This is the text in the box\]
     end
-    subgraph three
-    c1-->c2
+
+    subgraph Other Shapes
+        Shape_4[(Database)]
+        Shape_6>This is the text in the box]
+        Shape_11[/Christmas\\\]
+        Shape_12[\\\Manual operation/]
+        Shape_1(端子)
+        Shape_13(((端子)))
     end
 `
 
