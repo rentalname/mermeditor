@@ -79,7 +79,9 @@ function App() {
     if (filePath === null || filePath.length === 0) return
 
     const { svg } = await api.render('theGraph', code)
-    await writeBinaryFile(filePath, svg2png(svg))
+
+    const blob = await svg2png(svg)
+    if (blob) await writeBinaryFile(filePath, blob)
   }
 
   const [template, setTemplate] = useState("")
