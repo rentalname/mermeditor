@@ -6,6 +6,8 @@ use std::fs::{create_dir_all, File};
 use std::io::Write;
 use std::process::Command;
 
+use tauri::Manager;
+
 #[tauri::command]
 fn export(code: String, app_handle: tauri::AppHandle) -> String {
     let app_paths = app_init(app_handle);
@@ -69,6 +71,14 @@ fn app_init(app_handle: tauri::AppHandle) -> AppPaths {
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![export])
+        .setup(|app| {
+            if let Ok(_dev_tool) = env::var("DEV_TOOL") {
+                #[cfg(debug_assertions)]
+                app.get_window("main").unwrap().open_devtools();
+            }
+
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
