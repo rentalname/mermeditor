@@ -12,6 +12,10 @@ import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 
+import { styled, Tab, Tabs, Theme } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import ClearIcon from '@mui/icons-material/Clear';
+
 import Popper from '@mui/base/Popper';
 import SourceOutlinedIcon from '@mui/icons-material/SourceOutlined';
 import Button from '@mui/base/Button';
@@ -22,22 +26,54 @@ import { svg2png } from './converter';
 import ResizeHandle from './ResizeHandle';
 
 import Editor from './Editor';
-import { styled, Theme } from '@mui/material';
 import { classDiagramInstruction, erDiagramInstruction, flowchartInstruction, sequenceInstruction, timelineInstruction, zenumlInstruction } from './instructions';
+import { MermaidFile, newMermeidFile } from './MermaidFile';
 
 const api = mermaid.mermaidAPI
 
 api.initialize({ startOnLoad: false })
 
 function App() {
+  const [files, setFiles] = useState<MermaidFile[]>([newMermeidFile()])
+  const [activeFile, setActiveFile] = useState<MermaidFile>(files[0])
+
+  const switchTabHandler = (_event: unknown, id: string) => {
+    const nextFile = files.find((f) => (f.id == id))
+    if (nextFile) setActiveFile(nextFile)
+  }
+
+  const newTabHandler = () => {
+    setFiles((oldFiles) => [...oldFiles, newMermeidFile()])
+  }
+
+  const closeTabHandler = (closeFile: MermaidFile) => {
+    setFiles((oldFiles) => {
+      if (oldFiles.length <= 1) {
+        const newFile = newMermeidFile()
+        setActiveFile(newFile)
+        return [newFile]
+      } else {
+        const pos = oldFiles.findIndex((f) => (f.id == closeFile.id))
+        if (pos < 0) {
+          setActiveFile(oldFiles[0])
+        } else if (oldFiles[pos + 1]) {
+          setActiveFile(oldFiles[pos + 1])
+        } else {
+          setActiveFile(oldFiles[pos - 1])
+        }
+        return oldFiles.filter((f) => (f.id != closeFile.id))
+      }
+    })
+  }
+
   const [error, setError] = useState({
     parseError: false,
   })
-  const source = useRef<string>("")
+
   const svgDOM = useRef<HTMLDivElement>(null)
 
   const renderHandler = async () => {
-    const code = source.current
+    const code = activeFile.content
 
     const valid = await api.parse(code, { suppressErrors: true })
 
@@ -63,12 +99,12 @@ function App() {
       const dom = svgDOM.current!
       dom.innerHTML = svg
       bindFunctions?.(dom)
-      source.current = code
+      activeFile.content = code
     }
   }
 
   const saveHandler = async () => {
-    const code = source.current
+    const code = activeFile.content
 
     const valid = await api.parse(code, { suppressErrors: true })
 
@@ -84,7 +120,6 @@ function App() {
     if (blob) await writeBinaryFile(filePath, blob)
   }
 
-  const [template, setTemplate] = useState("")
   const [popperAnchor, setPopperAnchor] = useState<null | HTMLElement | SVGSVGElement>(null)
   const popperHandleClick = (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
     setPopperAnchor(popperAnchor ? null : event.currentTarget);
@@ -92,13 +127,16 @@ function App() {
   const open = Boolean(popperAnchor);
   const id = open ? 'simple-popper' : undefined;
   const loadTemplateHandler = (instruction: string) => {
-    setTemplate(instruction)
+    setActiveFile((oldFile) => {
+      oldFile.content = instruction
+      return { ...oldFile }
+    })
     setPopperAnchor(null)
   }
 
   useEffect(() => {
-    renderHandlerWithCode(template)
-  }, [template])
+    renderHandlerWithCode(activeFile.content)
+  }, [activeFile])
 
   return (
     <div className={styles.container}>
@@ -120,6 +158,18 @@ function App() {
           </Popper>
         </div>
       </div>
+      <Tabs
+        value={activeFile.id}
+        onChange={switchTabHandler}
+        sx={{ minHeight: 32, height: 32 }}
+      >
+        {
+          files.map((f) => (
+            <Tab sx={{ minHeight: 24, height: 24 }} value={f.id} icon={<ClearIcon onClick={() => { closeTabHandler(f) }} />} iconPosition="end" label={`[${f.contentType()}] ${f.name}`} key={f.id} />
+          ))
+        }
+        <Tab sx={{ minHeight: 24, height: 24 }} icon={<AddIcon />} onClick={newTabHandler} />
+      </Tabs>
 
       <div className={styles.main}>
         <PanelGroup autoSaveId="example" direction="vertical">
@@ -129,7 +179,7 @@ function App() {
             defaultSize={10}
             order={1}
           >
-            <Editor template={template} onChangeHook={renderHandlerWithCode} />
+            <Editor template={activeFile.content} onChangeHook={renderHandlerWithCode} />
           </Panel>
 
           <div className={styles.buildStatus}>
