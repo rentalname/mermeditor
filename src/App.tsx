@@ -28,14 +28,24 @@ import ResizeHandle from './ResizeHandle';
 import Editor from './Editor';
 import { classDiagramInstruction, erDiagramInstruction, flowchartInstruction, sequenceInstruction, timelineInstruction, zenumlInstruction } from './instructions';
 import { MermaidFile, newMermeidFile } from './MermaidFile';
+import { useDebounce } from './hooks/useDebounce';
+import { deleteFile, loadFiles, storeFile } from './storage';
 
 
 const api = mermaid.mermaidAPI
 
 api.initialize({ startOnLoad: false })
 
+const workingFiles = await loadFiles()
+
 function App() {
-  const [files, setFiles] = useState<MermaidFile[]>([newMermeidFile()])
+  const [files, setFiles] = useState<MermaidFile[]>((() => {
+    if (workingFiles.length > 0) {
+      return workingFiles
+    } else {
+      return [newMermeidFile()]
+    }
+  })())
   const [activeFile, setActiveFile] = useState<MermaidFile>(files[0])
 
   const switchTabHandler = (id: string) => {
@@ -48,24 +58,37 @@ function App() {
   }
 
   const closeTabHandler = (closeFile: MermaidFile) => {
+    if (closeFile.id == activeFile.id) {
+      const pos = files.findIndex((f) => (f.id == closeFile.id))
+      if (pos < 0) {
+        setActiveFile(files[0])
+      } else if (files[pos + 1]) {
+        setActiveFile(files[pos + 1])
+      } else {
+        setActiveFile(files[pos - 1])
+      }
+    }
     setFiles((oldFiles) => {
       if (oldFiles.length <= 1) {
         const newFile = newMermeidFile()
         setActiveFile(newFile)
         return [newFile]
-      } else {
-        const pos = oldFiles.findIndex((f) => (f.id == closeFile.id))
-        if (pos < 0) {
-          setActiveFile(oldFiles[0])
-        } else if (oldFiles[pos + 1]) {
-          setActiveFile(oldFiles[pos + 1])
-        } else {
-          setActiveFile(oldFiles[pos - 1])
-        }
-        return oldFiles.filter((f) => (f.id != closeFile.id))
       }
+
+      return oldFiles.filter((f) => (f.id != closeFile.id))
     })
+
+    deleteFile(closeFile).catch(console.log)
   }
+
+  const [watch, watchedFile] = useState<{ code: string, file: MermaidFile }>()
+  const changeFile = useDebounce(watch, 2000)
+
+  useEffect(() => {
+    if (changeFile) {
+      storeFile(changeFile.file).catch(console.log)
+    }
+  }, [changeFile])
 
   const [error, setError] = useState({
     parseError: false,
@@ -101,6 +124,12 @@ function App() {
       dom.innerHTML = svg
       bindFunctions?.(dom)
       activeFile.content = code
+      watchedFile(
+        {
+          code,
+          file: activeFile
+        }
+      )
     }
   }
 

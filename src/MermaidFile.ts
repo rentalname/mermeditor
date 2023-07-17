@@ -24,7 +24,7 @@ const diagrams = [
   { regex: /timeline/, type: 'TL' }
 ];
 
-class MermaidFileClass implements MermaidFile {
+export class MermaidFileClass implements MermaidFile {
   id: string;
   name?: string;
   content: string;

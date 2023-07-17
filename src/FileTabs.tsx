@@ -12,6 +12,10 @@ interface Props {
 }
 
 export const FileTabs: React.FC<Props> = ({ activeFile, files, onChangeTab, onCloseTab, onNewTab }) => {
+  const onClickCloseHandler = (ev: React.MouseEvent<SVGSVGElement, MouseEvent>, file: MermaidFile) => {
+    ev.stopPropagation()
+    onCloseTab(file)
+  }
   return (
     <Tabs
       value={activeFile.id}
@@ -20,7 +24,7 @@ export const FileTabs: React.FC<Props> = ({ activeFile, files, onChangeTab, onCl
     >
       {
         files.map((f) => (
-          <Tab sx={{ minHeight: 24, height: 24 }} value={f.id} icon={<ClearIcon onClick={() => { onCloseTab(f) }} />} iconPosition="end" label={`[${f.contentType()}] ${f.name}`} key={f.id} />
+          <Tab sx={{ minHeight: 24, height: 24 }} value={f.id} icon={<ClearIcon onClick={(ev) => { onClickCloseHandler(ev, f) }} />} iconPosition="end" label={`[${f.contentType()}] ${f.name}`} key={f.id} />
         ))
       }
       <Tab sx={{ minHeight: 24, height: 24 }} icon={<AddIcon />} onClick={onNewTab} />
