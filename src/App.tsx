@@ -32,13 +32,12 @@ import { useDebounce } from './hooks/useDebounce';
 import { deleteFile, loadFiles, storeFile } from './storage';
 
 
-const api = mermaid.mermaidAPI
-
-api.initialize({ startOnLoad: false })
+mermaid.initialize({ startOnLoad: false })
 
 const workingFiles = await loadFiles()
 
 function App() {
+  const { parse, render } = mermaid
   const [files, setFiles] = useState<MermaidFile[]>((() => {
     if (workingFiles.length > 0) {
       return workingFiles
@@ -99,12 +98,12 @@ function App() {
   const renderHandler = async () => {
     const code = activeFile.content
 
-    const valid = await api.parse(code, { suppressErrors: true })
+    const valid = await parse(code, { suppressErrors: true })
 
     setError((error) => ({ ...error, parseError: !valid }))
 
     if (valid) {
-      const { svg, bindFunctions } = await api.render('theGraph', code)
+      const { svg, bindFunctions } = await render('theGraph', code)
       const dom = svgDOM.current!
       dom.innerHTML = svg
       bindFunctions?.(dom)
@@ -114,12 +113,12 @@ function App() {
   const renderHandlerWithCode = async (code: string | undefined) => {
     if (code === undefined) return
 
-    const valid = await api.parse(code, { suppressErrors: true })
+    const valid = await parse(code, { suppressErrors: true })
 
     setError((error) => ({ ...error, parseError: !valid }))
 
     if (valid) {
-      const { svg, bindFunctions } = await api.render('theGraph', code)
+      const { svg, bindFunctions } = await render('theGraph', code)
       const dom = svgDOM.current!
       dom.innerHTML = svg
       bindFunctions?.(dom)
@@ -136,7 +135,7 @@ function App() {
   const saveHandler = async () => {
     const code = activeFile.content
 
-    const valid = await api.parse(code, { suppressErrors: true })
+    const valid = await parse(code, { suppressErrors: true })
 
     if (!valid) return
 
@@ -144,7 +143,7 @@ function App() {
 
     if (filePath === null || filePath.length === 0) return
 
-    const { svg } = await api.render('theGraph', code)
+    const { svg } = await render('theGraph', code)
 
     const blob = await svg2png(svg)
     if (blob) await writeBinaryFile(filePath, blob)
