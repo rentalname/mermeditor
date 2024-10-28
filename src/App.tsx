@@ -226,7 +226,7 @@ function App() {
               maxScale={4}
               disablePadding
             >
-              <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: '100%' }}>
+              <TransformComponent wrapperStyle={{ width: "100%", height: "100%" }} contentStyle={{ width: '100%', willChange: "transform" }}>
                 <div className={styles.renderArea} ref={svgDOM}></div>
               </TransformComponent>
             </TransformWrapper>
