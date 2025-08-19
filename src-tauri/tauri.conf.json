@@ -2,66 +2,40 @@
   "build": {
     "beforeDevCommand": "yarn dev",
     "beforeBuildCommand": "yarn build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": false
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "productName": "mermeditor",
-    "version": "0.2.0"
+  "bundle": {
+    "active": true,
+    "icon": [
+      "icons/32.png",
+      "icons/128.png",
+      "icons/128@2x.png",
+      "icons/256@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "targets": "all"
   },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": true
-      },
-      "fs": {
-        "all": false,
-        "readFile": true,
-        "writeFile": true,
-        "copyFile": true,
-        "scope": [
-          "$CACHE/**"
-        ]
-      },
-      "dialog": {
-        "all": false,
-        "ask": false,
-        "confirm": false,
-        "message": false,
-        "open": false,
-        "save": true
-      }
-    },
-    "bundle": {
-      "active": true,
-      "icon": [
-        "icons/32.png",
-        "icons/128.png",
-        "icons/128@2x.png",
-        "icons/256@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "identifier": "com.example.rentalname",
-      "targets": "all"
-    },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": false
-    },
+  "productName": "mermeditor",
+  "mainBinaryName": "mermeditor",
+  "version": "0.2.0",
+  "identifier": "com.example.rentalname",
+  "plugins": {},
+  "app": {
+    "withGlobalTauri": false,
     "windows": [
       {
         "fullscreen": false,
         "resizable": true,
         "title": "mermeditor",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "useHttpsScheme": true
       }
-    ]
+    ],
+    "security": {
+      "csp": null
+    }
   }
 }

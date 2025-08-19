@@ -1,5 +1,5 @@
-import { save } from '@tauri-apps/api/dialog';
-import { writeBinaryFile } from '@tauri-apps/api/fs';
+import { save } from '@tauri-apps/plugin-dialog';
+import { writeFile } from '@tauri-apps/plugin-fs';
 import mermaid from "mermaid";
 import { useEffect, useRef, useState } from "react";
 import styles from "./App.module.css";
@@ -146,7 +146,7 @@ function App() {
     const { svg } = await render('theGraph', code)
 
     const blob = await svg2png(svg)
-    if (blob) await writeBinaryFile(filePath, blob)
+    if (blob) await writeFile(filePath, blob)
   }
 
   const [popperAnchor, setPopperAnchor] = useState<null | HTMLElement | SVGSVGElement>(null)
