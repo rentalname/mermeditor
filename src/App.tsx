@@ -14,9 +14,9 @@ import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 
 import { styled, Theme } from '@mui/material';
 
-import Popper from '@mui/base/Popper';
+import Popper from '@mui/material/Popper';
 import SourceOutlinedIcon from '@mui/icons-material/SourceOutlined';
-import Button from '@mui/base/Button';
+import Button from '@mui/material/Button';
 
 import { FileTabs } from './FileTabs';
 
