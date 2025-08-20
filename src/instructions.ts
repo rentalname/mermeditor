@@ -1,6 +1,12 @@
 import { dedent } from "ts-dedent"
 
-export const classDiagramInstruction = dedent`
+export interface MermaidTemplate {
+  name: string;
+  type: string;
+  code: string;
+}
+
+const classDiagramInstruction = dedent`
 ---
 title: Animal example
 ---
@@ -66,7 +72,7 @@ classDiagram
     RelO ..   RelP : Link (Dashed)
 `
 
-export const erDiagramInstruction = dedent`
+const erDiagramInstruction = dedent`
 ---
 title: Order example
 ---
@@ -76,7 +82,7 @@ erDiagram
     CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
 `
 
-export const flowchartInstruction = dedent`
+const flowchartInstruction = dedent`
 flowchart TB
     newLines["\`Line1
     Line 2
@@ -138,7 +144,7 @@ flowchart TB
     end
 `
 
-export const sequenceInstruction = dedent`
+const sequenceInstruction = dedent`
 sequenceDiagram
     actor Alice
     actor Bob
@@ -151,7 +157,7 @@ sequenceDiagram
     J->>A: Great!
 `
 
-export const timelineInstruction = dedent`
+const timelineInstruction = dedent`
 timeline
     title Timeline of Industrial Revolution
     section basic
@@ -169,7 +175,7 @@ timeline
         Industry 5.0 : Artificial intelligence, Big data,3D printing
 `
 
-export const zenumlInstruction = dedent`
+const zenumlInstruction = dedent`
 zenuml
     title Annotators
     @Actor Alice
@@ -222,3 +228,36 @@ zenuml
       B->C: nested async message
     }
 `
+
+export const mermaidTemplates: MermaidTemplate[] = [
+  {
+    name: "Class Diagram",
+    type: "classDiagram",
+    code: classDiagramInstruction,
+  },
+  {
+    name: "ER Diagram",
+    type: "erDiagram",
+    code: erDiagramInstruction,
+  },
+  {
+    name: "Flowchart",
+    type: "flowchart",
+    code: flowchartInstruction,
+  },
+  {
+    name: "Sequence Diagram",
+    type: "sequenceDiagram",
+    code: sequenceInstruction,
+  },
+  {
+    name: "Timeline",
+    type: "timeline",
+    code: timelineInstruction,
+  },
+  {
+    name: "ZenUML",
+    type: "zenuml",
+    code: zenumlInstruction,
+  },
+];

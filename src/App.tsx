@@ -26,7 +26,7 @@ import { svg2png } from './converter.js';
 import ResizeHandle from './ResizeHandle.js';
 
 import Editor from './Editor.js';
-import { classDiagramInstruction, erDiagramInstruction, flowchartInstruction, sequenceInstruction, timelineInstruction, zenumlInstruction } from './instructions.js';
+import { mermaidTemplates } from './instructions.js';
 import { MermaidFile, newMermeidFile } from './MermaidFile.js';
 import { useDebounce } from './hooks/useDebounce.js';
 import { deleteFile, loadFiles, storeFile } from './storage.js';
@@ -188,11 +188,9 @@ function App() {
           <Popper id={id} open={open} anchorEl={popperAnchor}>
             <StyledPopperDiv>
               <p>select template(clear current content)</p>
-              <Button onClick={() => { loadTemplateHandler(classDiagramInstruction) }}>classDiagram</Button>
-              <Button onClick={() => { loadTemplateHandler(erDiagramInstruction) }}>erDiagram</Button>
-              <Button onClick={() => { loadTemplateHandler(flowchartInstruction) }}>flowchart</Button>
-              <Button onClick={() => { loadTemplateHandler(sequenceInstruction) }}>sequence</Button>
-              <Button onClick={() => { loadTemplateHandler(timelineInstruction) }}>timeline</Button>
+              {mermaidTemplates.map((template) => (
+                <Button key={template.type} onClick={() => { loadTemplateHandler(template.code) }}>{template.type}</Button>
+              ))}
             </StyledPopperDiv>
           </Popper>
         </div>
