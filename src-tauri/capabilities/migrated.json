@@ -1,0 +1,25 @@
+{
+  "identifier": "migrated",
+  "description": "permissions that were migrated from v1",
+  "local": true,
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "fs:allow-read-file",
+    "fs:allow-write-file",
+    "fs:allow-copy-file",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        "$CACHE/**"
+      ]
+    },
+    "shell:allow-open",
+    "dialog:allow-save",
+    "fs:default",
+    "dialog:default",
+    "shell:default"
+  ]
+}

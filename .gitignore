@@ -26,3 +26,4 @@ dist-ssr
 # App
 examples/*.png
 examples/*.svg
+src-tauri/gen
