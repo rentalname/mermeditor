@@ -27,3 +27,12 @@ dist-ssr
 examples/*.png
 examples/*.svg
 src-tauri/gen
+
+# Yarn
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/patches
+!.yarn/sdks
+!.yarn/versions
+.pnp.*

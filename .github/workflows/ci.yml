@@ -31,7 +31,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: "yarn"
+
+      - run: corepack enable
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -46,7 +47,7 @@ jobs:
         working-directory: ./src-tauri
 
       - name: install frontend dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: tauri build
         uses: tauri-apps/tauri-action@v0
