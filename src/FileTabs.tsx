@@ -1,7 +1,7 @@
 import { Tab, Tabs } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
-import { MermaidFile } from './MermaidFile';
+import { MermaidFile } from './MermaidFile.js';
 
 interface Props {
   activeFile: MermaidFile

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./App.module.css";
 
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
-import { blurReductionTransformer } from "./customTransformer";
+import { blurReductionTransformer } from "./customTransformer.js";
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
@@ -18,34 +18,44 @@ import Popper from '@mui/material/Popper';
 import SourceOutlinedIcon from '@mui/icons-material/SourceOutlined';
 import Button from '@mui/material/Button';
 
-import { FileTabs } from './FileTabs';
+import { FileTabs } from './FileTabs.js';
 
 import { Panel, PanelGroup } from "react-resizable-panels";
 
-import { svg2png } from './converter';
-import ResizeHandle from './ResizeHandle';
+import { svg2png } from './converter.js';
+import ResizeHandle from './ResizeHandle.js';
 
-import Editor from './Editor';
-import { classDiagramInstruction, erDiagramInstruction, flowchartInstruction, sequenceInstruction, timelineInstruction, zenumlInstruction } from './instructions';
-import { MermaidFile, newMermeidFile } from './MermaidFile';
-import { useDebounce } from './hooks/useDebounce';
-import { deleteFile, loadFiles, storeFile } from './storage';
+import Editor from './Editor.js';
+import { classDiagramInstruction, erDiagramInstruction, flowchartInstruction, sequenceInstruction, timelineInstruction, zenumlInstruction } from './instructions.js';
+import { MermaidFile, newMermeidFile } from './MermaidFile.js';
+import { useDebounce } from './hooks/useDebounce.js';
+import { deleteFile, loadFiles, storeFile } from './storage.js';
 
 
 mermaid.initialize({ startOnLoad: false })
 
-const workingFiles = await loadFiles()
-
 function App() {
   const { parse, render } = mermaid
-  const [files, setFiles] = useState<MermaidFile[]>((() => {
-    if (workingFiles.length > 0) {
-      return workingFiles
-    } else {
-      return [newMermeidFile()]
-    }
-  })())
+  // start with a single new file, then try to load persisted files
+  const [files, setFiles] = useState<MermaidFile[]>([newMermeidFile()])
   const [activeFile, setActiveFile] = useState<MermaidFile>(files[0])
+
+  useEffect(() => {
+    let mounted = true
+    loadFiles()
+      .then((loaded) => {
+        if (!mounted) return
+        if (loaded && loaded.length > 0) {
+          setFiles(loaded)
+          setActiveFile(loaded[0])
+        }
+      })
+      .catch(console.log)
+
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   const switchTabHandler = (id: string) => {
     const nextFile = files.find((f) => (f.id == id))
@@ -146,7 +156,7 @@ function App() {
     const { svg } = await render('theGraph', code)
 
     const blob = await svg2png(svg)
-    if (blob) await writeFile(filePath, blob)
+    if (blob) await writeFile({ path: filePath, contents: blob })
   }
 
   const [popperAnchor, setPopperAnchor] = useState<null | HTMLElement | SVGSVGElement>(null)

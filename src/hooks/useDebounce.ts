@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MermaidFile } from "../MermaidFile";
+import { MermaidFile } from "../MermaidFile.js";
 
 export const useDebounce = (value: { code: string, file: MermaidFile } | undefined, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);

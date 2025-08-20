@@ -1,5 +1,5 @@
 import { openDB } from 'idb';
-import { MermaidFile, MermaidFileClass } from './MermaidFile';
+import { MermaidFile, MermaidFileClass } from './MermaidFile.js';
 
 const DB = 'mermeditor-db'
 const FileStore = 'files'
