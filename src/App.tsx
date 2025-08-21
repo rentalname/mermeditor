@@ -1,6 +1,7 @@
 import { save } from '@tauri-apps/plugin-dialog';
 import { writeFile } from '@tauri-apps/plugin-fs';
 import mermaid from "mermaid";
+import zenuml from '@mermaid-js/mermaid-zenuml';
 import { useEffect, useRef, useState } from "react";
 import styles from "./App.module.css";
 
@@ -26,13 +27,14 @@ import { svg2png } from './converter.js';
 import ResizeHandle from './ResizeHandle.js';
 
 import Editor from './Editor.js';
-import { classDiagramInstruction, erDiagramInstruction, flowchartInstruction, sequenceInstruction, timelineInstruction, zenumlInstruction } from './instructions.js';
+import { mermaidTemplates } from './instructions.js';
 import { MermaidFile, newMermeidFile } from './MermaidFile.js';
 import { useDebounce } from './hooks/useDebounce.js';
 import { deleteFile, loadFiles, storeFile } from './storage.js';
 
-
+const init = mermaid.registerExternalDiagrams([zenuml]);
 mermaid.initialize({ startOnLoad: false })
+await init;
 
 function App() {
   const { parse, render } = mermaid
@@ -188,11 +190,9 @@ function App() {
           <Popper id={id} open={open} anchorEl={popperAnchor}>
             <StyledPopperDiv>
               <p>select template(clear current content)</p>
-              <Button onClick={() => { loadTemplateHandler(classDiagramInstruction) }}>classDiagram</Button>
-              <Button onClick={() => { loadTemplateHandler(erDiagramInstruction) }}>erDiagram</Button>
-              <Button onClick={() => { loadTemplateHandler(flowchartInstruction) }}>flowchart</Button>
-              <Button onClick={() => { loadTemplateHandler(sequenceInstruction) }}>sequence</Button>
-              <Button onClick={() => { loadTemplateHandler(timelineInstruction) }}>timeline</Button>
+              {mermaidTemplates.map((template) => (
+                <Button key={template.type} onClick={() => { loadTemplateHandler(template.code) }}>{template.type}</Button>
+              ))}
             </StyledPopperDiv>
           </Popper>
         </div>

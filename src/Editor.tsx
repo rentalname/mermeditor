@@ -4,7 +4,7 @@ import initEditor from 'monaco-mermaid'
 import * as monaco from "monaco-editor"
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
 import styles from "./Editor.module.css"
-import { classDiagramInstruction } from './instructions.js'
+import { mermaidTemplates } from './instructions.js'
 import { useEffect, useState } from 'react'
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 // MonacoEditor has some incompatible JSX typing in @monaco-editor/react; use `any` wrapper for JSX usage
 const MonacoEditorAny: any = MonacoEditor
 
-const Editor: React.FC<Props> = ({ template = classDiagramInstruction, onChangeHook }) => {
+const Editor: React.FC<Props> = ({ template = mermaidTemplates[0].code, onChangeHook }) => {
   const [monacoAvailable, setMonacoAvailable] = useState<boolean | null>(null)
   useEffect(() => {
     // initialize the monaco loader defensively at mount time
