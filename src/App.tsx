@@ -1,6 +1,7 @@
 import { save } from '@tauri-apps/plugin-dialog';
 import { writeFile } from '@tauri-apps/plugin-fs';
 import mermaid from "mermaid";
+import zenuml from '@mermaid-js/mermaid-zenuml';
 import { useEffect, useRef, useState } from "react";
 import styles from "./App.module.css";
 
@@ -31,8 +32,9 @@ import { MermaidFile, newMermeidFile } from './MermaidFile.js';
 import { useDebounce } from './hooks/useDebounce.js';
 import { deleteFile, loadFiles, storeFile } from './storage.js';
 
-
+const init = mermaid.registerExternalDiagrams([zenuml]);
 mermaid.initialize({ startOnLoad: false })
+await init;
 
 function App() {
   const { parse, render } = mermaid
