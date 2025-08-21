@@ -229,6 +229,52 @@ zenuml
     }
 `
 
+const architextureInstruction = dedent`
+architecture-beta
+    group api(cloud)[API]
+
+    service db(database)[Database] in api
+    service disk1(disk)[Storage] in api
+    service disk2(disk)[Storage] in api
+    service server(server)[Server] in api
+
+    db:L -- R:server
+    disk1:T -- B:server
+    disk2:T -- B:db
+`
+
+const blockInstruction = dedent`
+block
+columns 1
+  db(("DB"))
+  blockArrowId6<["&nbsp;&nbsp;&nbsp;"]>(down)
+  block:ID
+    A
+    B["A wide one in the middle"]
+    C
+  end
+  space
+  D
+  ID --> D
+  C --> D
+  style B fill:#969,stroke:#333,stroke-width:4px
+
+`
+const stateDiagramInstruction = dedent`
+---
+title: Simple sample
+---
+stateDiagram-v2
+    [*] --> Still
+    Still --> [*]
+
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]
+
+`
+
 export const mermaidTemplates: MermaidTemplate[] = [
   {
     name: "Class Diagram",
@@ -259,5 +305,20 @@ export const mermaidTemplates: MermaidTemplate[] = [
     name: "ZenUML",
     type: "zenuml",
     code: zenumlInstruction,
+  },
+  {
+    name: "Architecture",
+    type: "architecture",
+    code: architextureInstruction,
+  },
+  {
+    name: "Block",
+    type: "block",
+    code: blockInstruction,
+  },
+  {
+    name: "State Diagram",
+    type: "stateDiagram",
+    code: stateDiagramInstruction,
   },
 ];
