@@ -158,7 +158,7 @@ function App() {
     const { svg } = await render('theGraph', code)
 
     const blob = await svg2png(svg)
-    if (blob) await writeFile({ path: filePath, contents: blob })
+    if (blob) await writeFile({ path: filePath, contents: Array.from(blob) })
   }
 
   const [popperAnchor, setPopperAnchor] = useState<null | HTMLElement | SVGSVGElement>(null)
