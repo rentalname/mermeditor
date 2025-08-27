@@ -55,5 +55,18 @@ const loadImage = async (url: string): Promise<HTMLImageElement> => {
 }
 
 const convertSvgToBase64 = (svgData: string): string => {
-  return btoa(unescape(encodeURIComponent(svgData)));
+  const encoder = new TextEncoder();
+  const svgDataBytes = encoder.encode(svgData);
+  const base64EncodedData = base64FromArrayBuffer(svgDataBytes.buffer);
+  return base64EncodedData;
+}
+
+const base64FromArrayBuffer = (arrayBuffer: ArrayBuffer): string => {
+  let binary = '';
+  const bytes = new Uint8Array(arrayBuffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
 }
