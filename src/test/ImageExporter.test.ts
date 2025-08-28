@@ -11,7 +11,7 @@ describe('ImageExporter', () => {
     mermaid.initialize({ startOnLoad: false });
   });
 
-  const runTest = async (fileName:string) => {
+  const runTest = async (fileName: string) => {
     const filePath = path.join(examplesDir, fileName);
     let code = await fs.readFile(filePath, 'utf-8');
     const { svg } = await mermaid.render('theGraph', code);
@@ -21,20 +21,19 @@ describe('ImageExporter', () => {
     expect(png?.length).toBeGreaterThan(0);
   };
 
-  // @TODO: Un-skip these tests when mermaid can be run in a jsdom environment
-  it.skip('should convert class diagram to png', async () => {
+  it('should convert class diagram to png', async () => {
     await runTest('class_diagram.mmd');
   });
 
-  it.skip('should convert flowchart to png', async () => {
+  it('should convert flowchart to png', async () => {
     await runTest('flowchart.mmd');
   });
 
-  it.skip('should convert sequence diagram from md to png', async () => {
+  it('should convert sequence diagram from md to png', async () => {
     await runTest('sequence_diagram.mmd');
   });
 
-  it.skip('should convert sequence diagram to png', async () => {
+  it('should convert sequence diagram to png', async () => {
     await runTest('sequence_diagram2.mmd');
   });
 });
