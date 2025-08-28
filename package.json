@@ -32,6 +32,7 @@
     "react-dom": "^19.1.1",
     "react-resizable-panels": "^3.0.4",
     "react-zoom-pan-pinch": "^3.7.0",
+    "sharp": "^0.34.3",
     "ts-dedent": "^2.2.0"
   },
   "devDependencies": {
@@ -44,6 +45,7 @@
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.1",
     "@vitest/ui": "^2.0.5",
+    "canvas": "^3.2.0",
     "jsdom": "^24.1.1",
     "stylelint": "^16.23.1",
     "typescript": "^5.9.2",
