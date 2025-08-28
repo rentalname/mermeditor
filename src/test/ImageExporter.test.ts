@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
-import { ImageExporter } from './ImageExporter';
+import { ImageExporter } from './../ImageExporter.js';
 import mermaid from 'mermaid';
 import fs from 'fs/promises';
 import path from 'path';
@@ -17,8 +17,8 @@ global.HTMLCanvasElement.prototype.getContext = vi.fn(() => ({
 
 // @ts-ignore
 global.Image = class {
-  onload: () => void = () => {};
-  onerror: (err: Error) => void = () => {};
+  onload: () => void = () => { };
+  onerror: (err: Error) => void = () => { };
   src: string = '';
   width: number = 100;
   height: number = 100;
