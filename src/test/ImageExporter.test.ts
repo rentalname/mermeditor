@@ -38,7 +38,7 @@ global.atob = (str: string) => Buffer.from(str, 'base64').toString('binary');
 global.btoa = (str: string) => Buffer.from(str, 'binary').toString('base64');
 global.TextEncoder = require('util').TextEncoder;
 
-const examplesDir = path.join(__dirname, '../examples');
+const examplesDir = path.join(__dirname, './examples');
 
 describe('ImageExporter', () => {
   beforeAll(() => {
