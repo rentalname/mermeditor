@@ -23,7 +23,7 @@ import { FileTabs } from './FileTabs.js';
 
 import { Panel, PanelGroup } from "react-resizable-panels";
 
-import { svg2png } from './converter.js';
+import { ImageExporter } from './ImageExporter.js';
 import ResizeHandle from './ResizeHandle.js';
 
 import Editor from './Editor.js';
@@ -157,7 +157,8 @@ function App() {
 
     const { svg } = await render('theGraph', code)
 
-    const blob = await svg2png(svg)
+    const exporter = new ImageExporter()
+    const blob = await exporter.svg2png(svg)
     if (blob) await writeFile(filePath, blob)
   }
 
