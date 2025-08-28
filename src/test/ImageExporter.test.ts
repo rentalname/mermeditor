@@ -45,16 +45,9 @@ describe('ImageExporter', () => {
     mermaid.initialize({ startOnLoad: false });
   });
 
-  const runTest = async (fileName: string, isMarkdown: boolean = false) => {
+  const runTest = async (fileName: string) => {
     const filePath = path.join(examplesDir, fileName);
     let code = await fs.readFile(filePath, 'utf-8');
-
-    if (isMarkdown) {
-      const match = code.match(/```mermaid\n([\s\S]*?)\n```/);
-      if (match) {
-        code = match[1];
-      }
-    }
 
     const { svg } = await mermaid.render('theGraph', code);
 
@@ -74,7 +67,7 @@ describe('ImageExporter', () => {
   });
 
   it('should convert sequence diagram from md to png', async () => {
-    await runTest('sequence_diagram.md', true);
+    await runTest('sequence_diagram.mmd');
   });
 
   it('should convert sequence diagram to png', async () => {
