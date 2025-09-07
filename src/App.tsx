@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./App.module.css";
 
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
-import { blurReductionTransformer } from "./customTransformer.js";
+import { blurReductionTransformer } from "./customTransformer";
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
@@ -15,22 +15,23 @@ import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
 
 import { styled, Theme } from '@mui/material';
 
+import Grid from '@mui/material/Grid';
 import Popper from '@mui/material/Popper';
 import SourceOutlinedIcon from '@mui/icons-material/SourceOutlined';
 import Button from '@mui/material/Button';
 
-import { FileTabs } from './FileTabs.js';
+import { FileTabs } from './FileTabs';
 
 import { Panel, PanelGroup } from "react-resizable-panels";
 
-import { svg2png } from './converter.js';
-import ResizeHandle from './ResizeHandle.js';
+import { svg2png } from './converter';
+import ResizeHandle from './ResizeHandle';
 
-import Editor from './Editor.js';
-import { mermaidTemplates } from './instructions.js';
-import { MermaidFile, newMermeidFile } from './MermaidFile.js';
-import { useDebounce } from './hooks/useDebounce.js';
-import { deleteFile, loadFiles, storeFile } from './storage.js';
+import Editor from './Editor';
+import { mermaidTemplates } from './instructions.tsx';
+import { MermaidFile, newMermeidFile } from './MermaidFile';
+import { useDebounce } from './hooks/useDebounce';
+import { deleteFile, loadFiles, storeFile } from './storage';
 
 const init = mermaid.registerExternalDiagrams([zenuml]);
 mermaid.initialize({ startOnLoad: false })
@@ -187,12 +188,19 @@ function App() {
           <RefreshOutlinedIcon className={styles.actionButton} onClick={renderHandler} />
           <SaveAltOutlinedIcon className={styles.actionButton} onClick={saveHandler} />
           <SourceOutlinedIcon className={styles.actionButton} onClick={(e) => popperHandleClick(e)} />
-          <Popper id={id} open={open} anchorEl={popperAnchor}>
+          <Popper id={id} open={open} anchorEl={popperAnchor} placement="bottom-end">
             <StyledPopperDiv>
               <p>select template(clear current content)</p>
-              {mermaidTemplates.map((template) => (
-                <Button key={template.type} onClick={() => { loadTemplateHandler(template.code) }}>{template.type}</Button>
-              ))}
+              <Grid container spacing={2}>
+                {mermaidTemplates.map((template) => (
+                  <Grid item xs={6} key={template.type} >
+                    <StyledTemplateButton onClick={() => { loadTemplateHandler(template.code) }}>
+                      {template.icon}
+                      {template.name}
+                    </StyledTemplateButton>
+                  </Grid>
+                ))}
+              </Grid>
             </StyledPopperDiv>
           </Popper>
         </div>
@@ -256,5 +264,19 @@ const StyledPopperDiv = styled('div')(
   background-color: ${theme.palette.mode === 'dark' ? '#121212' : '#fff'};
   opacity: 1;
   margin: 0.25rem 0px;
+  width: 300px;
+`,
+);
+
+const StyledTemplateButton = styled(Button)(
+  () => `
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: none;
+  height: 80px;
+  width: 100%;
 `,
 );
