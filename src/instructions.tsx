@@ -1,9 +1,19 @@
 import { dedent } from "ts-dedent"
+import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
+import DonutSmallOutlinedIcon from '@mui/icons-material/DonutSmallOutlined';
+import HubOutlinedIcon from '@mui/icons-material/HubOutlined';
+import SchemaOutlinedIcon from '@mui/icons-material/SchemaOutlined';
+import SplitscreenOutlinedIcon from '@mui/icons-material/SplitscreenOutlined';
+import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined';
+import ViewTimelineOutlinedIcon from '@mui/icons-material/ViewTimelineOutlined';
+import WebhookOutlinedIcon from '@mui/icons-material/WebhookOutlined';
+import AlignHorizontalLeftOutlinedIcon from '@mui/icons-material/AlignHorizontalLeftOutlined';
 
 export interface MermaidTemplate {
   name: string;
   type: string;
   code: string;
+  icon: JSX.Element;
 }
 
 const classDiagramInstruction = dedent`
@@ -280,45 +290,54 @@ export const mermaidTemplates: MermaidTemplate[] = [
     name: "Class Diagram",
     type: "classDiagram",
     code: classDiagramInstruction,
+    icon: <AccountTreeOutlinedIcon sx={{ fontSize: 40 }} />,
   },
   {
     name: "ER Diagram",
     type: "erDiagram",
     code: erDiagramInstruction,
+    icon: <SchemaOutlinedIcon sx={{ fontSize: 40 }} />,
   },
   {
     name: "Flowchart",
     type: "flowchart",
     code: flowchartInstruction,
+    icon: <HubOutlinedIcon sx={{ fontSize: 40 }} />,
   },
   {
     name: "Sequence Diagram",
     type: "sequenceDiagram",
     code: sequenceInstruction,
+    icon: <SplitscreenOutlinedIcon sx={{ fontSize: 40 }} />,
   },
   {
     name: "Timeline",
     type: "timeline",
     code: timelineInstruction,
+    icon: <TimelineOutlinedIcon sx={{ fontSize: 40 }} />,
   },
   {
     name: "ZenUML",
     type: "zenuml",
     code: zenumlInstruction,
+    icon: <WebhookOutlinedIcon sx={{ fontSize: 40 }} />,
   },
   {
     name: "Architecture",
     type: "architecture",
     code: architextureInstruction,
+    icon: <ViewTimelineOutlinedIcon sx={{ fontSize: 40 }} />,
   },
   {
     name: "Block",
     type: "block",
     code: blockInstruction,
+    icon: <AlignHorizontalLeftOutlinedIcon sx={{ fontSize: 40 }} />,
   },
   {
     name: "State Diagram",
     type: "stateDiagram",
     code: stateDiagramInstruction,
+    icon: <DonutSmallOutlinedIcon sx={{ fontSize: 40 }} />,
   },
 ];
