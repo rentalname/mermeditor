@@ -22,7 +22,7 @@
     "@tauri-apps/plugin-fs": "^2.4.2",
     "idb": "^8.0.3",
     "mermaid": "^11.11.0",
-    "monaco-editor": "^0.52.2",
+    "monaco-editor": "^0.54.0",
     "monaco-mermaid": "^1.1.0",
     "nanoid": "^5.1.5",
     "react": "^19.1.1",
