@@ -31,6 +31,7 @@ import { mermaidTemplates } from './instructions.js';
 import { MermaidFile, newMermeidFile } from './MermaidFile.js';
 import { useDebounce } from './hooks/useDebounce.js';
 import { deleteFile, loadFiles, storeFile } from './storage.js';
+import { preprocessMermaidCode } from './preprocess.js';
 
 const init = mermaid.registerExternalDiagrams([zenuml]);
 mermaid.initialize({ startOnLoad: false })
@@ -108,7 +109,7 @@ function App() {
   const svgDOM = useRef<HTMLDivElement>(null)
 
   const renderHandler = async () => {
-    const code = activeFile.content
+    const code = preprocessMermaidCode(activeFile.content)
 
     const valid = await parse(code, { suppressErrors: true })
 
@@ -125,12 +126,14 @@ function App() {
   const renderHandlerWithCode = async (code: string | undefined) => {
     if (code === undefined) return
 
-    const valid = await parse(code, { suppressErrors: true })
+    const processedCode = preprocessMermaidCode(code)
+
+    const valid = await parse(processedCode, { suppressErrors: true })
 
     setError((error) => ({ ...error, parseError: !valid }))
 
     if (valid) {
-      const { svg, bindFunctions } = await render('theGraph', code)
+      const { svg, bindFunctions } = await render('theGraph', processedCode)
       const dom = svgDOM.current!
       dom.innerHTML = svg
       bindFunctions?.(dom)
@@ -145,7 +148,7 @@ function App() {
   }
 
   const saveHandler = async () => {
-    const code = activeFile.content
+    const code = preprocessMermaidCode(activeFile.content)
 
     const valid = await parse(code, { suppressErrors: true })
 
