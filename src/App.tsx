@@ -93,14 +93,22 @@ function App() {
     deleteFile(closeFile).catch(console.log)
   }
 
-  const [watch, watchedFile] = useState<{ code: string, file: MermaidFile }>()
-  const changeFile = useDebounce(watch, 2000)
+  const [editorContent, setEditorContent] = useState<string>(activeFile.content)
+  const debouncedContent = useDebounce(editorContent, 500)
 
   useEffect(() => {
-    if (changeFile) {
-      storeFile(changeFile.file).catch(console.log)
+    setEditorContent(activeFile.content)
+  }, [activeFile])
+
+  useEffect(() => {
+    renderHandlerWithCode(debouncedContent)
+    if (activeFile.content !== debouncedContent) {
+      const updatedFile = { ...activeFile, content: debouncedContent };
+      setActiveFile(updatedFile);
+      setFiles(prev => prev.map(f => f.id === activeFile.id ? updatedFile : f));
+      storeFile(updatedFile).catch(console.log)
     }
-  }, [changeFile])
+  }, [debouncedContent])
 
   const [error, setError] = useState({
     parseError: false,
@@ -109,7 +117,7 @@ function App() {
   const svgDOM = useRef<HTMLDivElement>(null)
 
   const renderHandler = async () => {
-    const code = preprocessMermaidCode(activeFile.content)
+    const code = preprocessMermaidCode(editorContent)
 
     const valid = await parse(code, { suppressErrors: true })
 
@@ -124,33 +132,52 @@ function App() {
   }
 
   const renderHandlerWithCode = async (code: string | undefined) => {
-    if (code === undefined) return
+    if (!code) return
 
     const processedCode = preprocessMermaidCode(code)
 
-    const valid = await parse(processedCode, { suppressErrors: true })
+    try {
+      const valid = await parse(processedCode, { suppressErrors: true })
+      setError((error) => ({ ...error, parseError: !valid }))
 
-    setError((error) => ({ ...error, parseError: !valid }))
+      if (valid) {
+        const { svg, bindFunctions } = await render('theGraph', processedCode)
+        const dom = svgDOM.current!
 
-    if (valid) {
-      const { svg, bindFunctions } = await render('theGraph', processedCode)
-      const dom = svgDOM.current!
-      dom.innerHTML = svg
-      bindFunctions?.(dom)
-      activeFile.content = code
-      watchedFile(
-        {
-          code,
-          file: activeFile
+        // Keep current dimensions to prevent layout shift
+        const rect = dom.getBoundingClientRect();
+        if (rect.height > 0) {
+          dom.style.minHeight = `${rect.height}px`;
         }
-      )
+        if (rect.width > 0) {
+          dom.style.minWidth = `${rect.width}px`;
+        }
+
+        // Use requestAnimationFrame to update DOM after layout is measured
+        requestAnimationFrame(() => {
+          dom.innerHTML = svg
+          bindFunctions?.(dom)
+
+          // Use another rAF or a small timeout to release constraints after paint
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              dom.style.minHeight = '';
+              dom.style.minWidth = '';
+            }, 100);
+          });
+        });
+      }
+    } catch (e) {
+      console.error('Mermaid render error:', e)
+      setError((error) => ({ ...error, parseError: true }))
     }
   }
 
   const saveHandler = async () => {
-    const code = preprocessMermaidCode(activeFile.content)
+    const code = activeFile.content
+    const processedCode = preprocessMermaidCode(code)
 
-    const valid = await parse(code, { suppressErrors: true })
+    const valid = await parse(processedCode, { suppressErrors: true })
 
     if (!valid) return
 
@@ -158,7 +185,7 @@ function App() {
 
     if (filePath === null || filePath.length === 0) return
 
-    const { svg } = await render('theGraph', code)
+    const { svg } = await render('theGraph', processedCode)
 
     const blob = await svg2png(svg)
     if (blob) await writeFile(filePath, blob)
@@ -171,16 +198,13 @@ function App() {
   const open = Boolean(popperAnchor);
   const id = open ? 'simple-popper' : undefined;
   const loadTemplateHandler = (instruction: string) => {
+    setEditorContent(instruction)
     setActiveFile((oldFile) => {
       oldFile.content = instruction
       return { ...oldFile }
     })
     setPopperAnchor(null)
   }
-
-  useEffect(() => {
-    renderHandlerWithCode(activeFile.content)
-  }, [activeFile])
 
   return (
     <div className={styles.container}>
@@ -216,7 +240,7 @@ function App() {
             defaultSize={10}
             order={1}
           >
-            <Editor template={activeFile.content} onChangeHook={renderHandlerWithCode} />
+            <Editor template={editorContent} onChangeHook={setEditorContent} />
           </Panel>
 
           <div className={styles.buildStatus}>
